@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="egovframework.example.survey.mapper.SurveyMapper">
+
+
+	<select id="selectQuestionList" resultType="egovMap"
+		parameterType="egovframework.example.survey.service.SurveyVO">
+	
+		SELECT *
+		FROM (
+		SELECT *
+		FROM MBTI_QUESTIONS
+		WHERE QUESTION_TYPE IN ('E', 'I')
+		ORDER BY DBMS_RANDOM.VALUE
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]>
+		6
+
+		UNION ALL
+		SELECT *
+		FROM (
+		SELECT *
+		FROM MBTI_QUESTIONS
+		WHERE QUESTION_TYPE IN ('T', 'F')
+		ORDER BY DBMS_RANDOM.VALUE
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]>
+		6
+
+		UNION ALL
+
+		SELECT *
+		FROM (
+		SELECT *
+		FROM MBTI_QUESTIONS
+		WHERE QUESTION_TYPE IN ('J', 'P')
+		ORDER BY DBMS_RANDOM.VALUE
+		)
+		WHERE ROWNUM <![CDATA[ <= ]]>
+		6
+		UNION ALL
+
+		SELECT * 
+		FROM ( 
+		SELECT * 
+		FROM MBTI_QUESTIONS  
+		 WHERE QUESTION_TYPE IN ('S', 'N') 
+		 ORDER BY DBMS_RANDOM.VALUE )
+
+		WHERE ROWNUM <![CDATA[<=]]>
+		6
+
+	</select>
+
+
+	<select id="getNextQuestions"
+		resultType="egovframework.example.survey.service.SurveyVO"
+		parameterType="egovframework.example.survey.service.SurveyVO">
+		SELECT question_id, question_content,question_type
+		FROM
+		mbti_questions
+
+		where question_id=#{question_id}
+
+		ORDER BY question_id
+	</select>
+	
+	<insert id="saveRequest" parameterType="egovMap">
+		INSERT INTO
+		MBTI_RESULTS
+		(RESULT_ID,RESULT_TYPE,RESULT_CONTENT,ANSWERS
+		)VALUES(
+		#{question_id},#{question_type},#{question_content},#{question_Type}
+		)
+
+	</insert>
+	<select id="selectMyList" resultType="egovMap"
+		parameterType="egovframework.example.survey.service.SurveyVO">
+		SELECT question_id, question_content
+		FROM mbti_questions
+
+		where question_id=#{question_id}
+
+		ORDER BY question_id
+	</select>
+	
+	<select id="checkList" resultType="egovMap"
+	parameterType="egovframework.example.survey.service.SurveyVO">
+		
+		SELECT RESULT_TATLE,RESULT_CONTENT,RESULT_TYPE,RESULT_IMG 
+		FROM MBTI_RESULTS 
+		WHERE RESULT_TYPE= #{resultType}
+		
+	</select>
+</mapper>
+
